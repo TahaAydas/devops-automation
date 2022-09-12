@@ -17,7 +17,7 @@ spec:
           image: tahaaydas/devops-integration
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8083
+            - containerPort: 8098
 
 ---
 apiVersion: v1
@@ -29,6 +29,6 @@ spec:
     app: spring-boot-k8s
   ports:
     - protocol: "TCP"
-      port: 8083 # The port that the service is running on in the cluster
-      targetPort: 8083 # The port exposed by the service
+      port: 8098 # The port that the service is running on in the cluster
+      targetPort: 8098 # The port exposed by the service
   type: NodePort # type of the service.
