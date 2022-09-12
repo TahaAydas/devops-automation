@@ -4,34 +4,35 @@ pipeline {
         maven 'maven_3_5_0'
     }
     stages{
-        stage('Build Maven'){
+        stage('Initiliaze Maven'){
             steps{
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Java-Techie-jt/devops-automation']]])
-                sh 'mvn clean install'
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-credentials', url: 'https://github.com/TahaAydas/devops-automation']]])
+                bat 'mvn clean install'
             }
         }
         stage('Build docker image'){
             steps{
                 script{
-                    sh 'docker build -t javatechie/devops-integration .'
+                    bat 'docker build -t tahaaydas/devops-integration .'
                 }
             }
         }
-        stage('Push image to Hub'){
+        stage('Push image to DockerHub'){
             steps{
                 script{
-                   withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
-                   sh 'docker login -u javatechie -p ${dockerhubpwd}'
+                   
+                   bat 'docker login -u tahaaydas -p Tersane13'
 
-}
-                   sh 'docker push javatechie/devops-integration'
+
+                   
+                   bat 'docker push tahaaydas/devops-integration:latest'
                 }
             }
         }
-        stage('Deploy to k8s'){
+        stage('Deploy to Kubernetes'){
             steps{
                 script{
-                    kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'k8sconfigpwd')
+                    kubernetesDeploy configs: 'deploymentservice.yaml', kubeConfig: [path: ''], kubeconfigId: 'k8configpwd', secretName: '', ssh: [sshCredentialsId: '*', sshServer: ''], textCredentials: [certificateAuthorityData: '', clientCertificateData: '', clientKeyData: '', serverUrl: 'https://']                    
                 }
             }
         }
